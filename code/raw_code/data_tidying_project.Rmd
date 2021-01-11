@@ -48,17 +48,24 @@ colnames(df2) <- df2[1,]
 
 ```{r save-data, warning=FALSE} 
 ## use saveRDS() to save each object as a .rds file 
-
+saveRDS(df1, "df_department.rds")
+saveRDS(df2, "df_retail.rds")
 ```
 
 ### Wrangle Data
 
 ```{r wrangle-df2, warning=FALSE} 
 ## an example working with df2
+dim(df2)
+colnames(df2)
+glimpse(df2)
+
+skim(df_retail)
 ## let's wrangle!
 df_retail <- df2 %>%
   ## remove the r from the column names of df2
   magrittr::set_colnames(gsub("r","",df2[1,])) %>% 
+
   ## add a new column called "business"
   mutate(business = gsub("[…]|[.]","",`Kind of business`)) %>%
   ## filter to include Retail sales or Department stores sales
@@ -75,25 +82,28 @@ df_retail <- df2 %>%
 
 ```{r wrangle-df1, warning=FALSE} 
 ## now, your turn!
+dim(df1)
+View(df1)
+skim(df_department)
 ## work with df1
 df_department <- df1 %>% 
   ## split Period column into one column called "month" and one called "year"
-  function_name() %>%
+  separate('Period', into=c('month', 'year'), extra= 'drop', remove=FALSE) %>%
   ## add a column `value` which contains the 
   ## information from the `Value (in millions)` 
-  function_name() %>%
+  mutate(value = `Value (in millions)`) %>%
   ## group the data frame by the `year` column
-  function_name() %>%
+  group_by(year) %>%
   ## Summarize the data by creating a new column
   ## call this column `n` 
   ## have it contain the sum of the `value` column
-  function_name() %>% 
+  summarize(n=sum(value)) %>% 
   ### create a new column called `business`
   ## set the value of this column to  be "department stores" 
   ## for the entire data set 
-  function_name() %>%
+  mutate(business = 'department stores') %>%
   ## reorder column names to be : business, year, n
-  function_name()
+  select(business, year, n)
 ```
 
 ```{r merge-data, warning=FALSE} 
